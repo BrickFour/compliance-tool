@@ -10,7 +10,7 @@ import { seedSources, ensureIndexes } from '../regulatory-routes.mjs';
 import { SEED_SOURCES } from '../regulatory.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-process.loadEnvFile(path.join(here, '..', '.env'));
+process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const APPLY = process.argv.includes('--apply');
 
 const client = new MongoClient(process.env.MONGODB_URI);

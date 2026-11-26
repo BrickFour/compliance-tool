@@ -62,7 +62,7 @@ export default function App() {
         <div className={'mobile-overlay' + (mobileNavOpen ? ' show' : '')} onClick={() => setMobileNavOpen(false)} aria-hidden="true" />
         <aside className={'sidebar' + (mobileNavOpen ? ' open' : '')}>
           <div className="brand">
-            <img className="logo" src="images/aakar-logo.png" alt="Aakar" />
+            <img className="logo" src="images/brick-four-logo.jpeg" alt="Brick Four" />
             <span>Compliance Tracker</span>
             <button className="mobile-nav-close" type="button" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)}>✕</button>
           </div>

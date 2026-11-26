@@ -16,7 +16,7 @@ const itemsFile = path.join(root, 'shared', 'items.json');
 const stagesFile = path.join(root, 'shared', 'stages.json');
 const reportFile = path.join(root, 'data-prep', 'stage-migration-report.md');
 const APPLY = process.argv.includes('--apply');
-if (fs.existsSync(path.join(here, '..', '.env'))) process.loadEnvFile(path.join(here, '..', '.env'));
+if (fs.existsSync(path.join(here, '..', '..', '.env'))) process.loadEnvFile(path.join(here, '..', '..', '.env'));
 
 const before = JSON.parse(fs.readFileSync(itemsFile, 'utf8'));
 const dup = duplicateIndex();

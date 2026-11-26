@@ -1,6 +1,6 @@
 // Fresh set-up for a new client database.
 //   node migrate/init-db.mjs            dry run: shows the database name and which collections are missing
-//   node migrate/init-db.mjs --apply    creates the database (named by MONGODB_DB in server/.env), every collection the app uses,
+//   node migrate/init-db.mjs --apply    creates the database (named by MONGODB_DB in the root .env), every collection the app uses,
 //                                       all indexes, default health settings and the starting regulatory sources.
 // Adds only. Existing collections, documents and settings are never changed or deleted. Safe to re-run.
 import path from 'node:path';
@@ -10,11 +10,11 @@ import { seedSources, ensureIndexes as ensureRegulatoryIndexes } from '../regula
 import { DEFAULT_HEALTH } from '../health.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-process.loadEnvFile(path.join(here, '..', '.env'));
+process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const APPLY = process.argv.includes('--apply');
 const DB_NAME = process.env.MONGODB_DB;
-if (!process.env.MONGODB_URI) { console.error('MONGODB_URI is missing in server/.env'); process.exit(1); }
-if (!DB_NAME) { console.error('MONGODB_DB is missing in server/.env'); process.exit(1); }
+if (!process.env.MONGODB_URI) { console.error('MONGODB_URI is missing in the root .env'); process.exit(1); }
+if (!DB_NAME) { console.error('MONGODB_DB is missing in the root .env'); process.exit(1); }
 
 const COLLECTIONS = [
   // core data

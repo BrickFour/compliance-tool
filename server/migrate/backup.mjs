@@ -7,7 +7,7 @@ import { MongoClient } from 'mongodb';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..', '..');
-if (fs.existsSync(path.join(here, '..', '.env'))) process.loadEnvFile(path.join(here, '..', '.env'));
+if (fs.existsSync(path.join(here, '..', '..', '.env'))) process.loadEnvFile(path.join(here, '..', '..', '.env'));
 
 export async function backup(label = 'manual') {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');

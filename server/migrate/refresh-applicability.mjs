@@ -10,7 +10,7 @@ import { generate } from '../generate.mjs';
 import { backup } from './backup.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-process.loadEnvFile(path.join(here, '..', '.env'));
+process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const DB_NAME = process.env.MONGODB_DB || 'compliance_tracker';
 const client = new MongoClient(process.env.MONGODB_URI);
 await client.connect();

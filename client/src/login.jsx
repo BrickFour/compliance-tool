@@ -29,7 +29,7 @@ function Login() {
 
   return (
     <form className="card" onSubmit={submit}>
-      <div className="brand"><img src="images/aakar-logo.png" alt="Aakar" />Compliance Tracker</div>
+      <div className="brand"><img src="images/brick-four-logo.jpeg" alt="Brick Four" />Compliance Tracker</div>
       <div className="subtitle">Sign in to access real estate compliance &amp; regulatory intelligence</div>
       <label htmlFor="email">Email</label>
       <input id="email" type="email" autoComplete="username" required autoFocus value={email} onChange={(e) => setEmail(e.target.value)} />

@@ -11,7 +11,7 @@ import { loadShared, healthOf, saveSnapshot, syncRecs } from '../intel.mjs';
 import { buildRecommendations, DEFAULT_HEALTH } from '../health.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-process.loadEnvFile(path.join(here, '..', '.env'));
+process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const APPLY = process.argv.includes('--apply');
 
 const client = new MongoClient(process.env.MONGODB_URI);

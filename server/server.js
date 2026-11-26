@@ -22,7 +22,7 @@ const sharedDir = path.join(here, '..', 'shared');           // register data + 
 const clientDir = path.join(here, '..', 'client', 'dist');   // the built React app (npm run build)
 const imagesDir = path.join(here, '..', 'images');
 const knowledgeDir = path.join(here, '..', 'knowledge');
-const envFile = path.join(here, '.env');
+const envFile = path.join(here, '..', '.env');
 if (fs.existsSync(envFile)) process.loadEnvFile(envFile);
 
 const {
@@ -43,7 +43,7 @@ function fatal(message) {
   console.error(message);
   process.exit(1);
 }
-if (!MONGODB_URI) fatal('MONGODB_URI is missing. Copy server/.env.example to server/.env and fill it in (on Vercel: Project Settings → Environment Variables).');
+if (!MONGODB_URI) fatal('MONGODB_URI is missing. Copy .env.example to .env and fill it in (on Vercel: Project Settings → Environment Variables).');
 if (PROD && (!SESSION_SECRET || SESSION_SECRET.length < 32)) fatal('SESSION_SECRET (at least 32 characters) is required when NODE_ENV=production.');
 const SECRET = SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 if (!SESSION_SECRET) console.warn('SESSION_SECRET not set: using a random one, so everyone is signed out on each restart.');

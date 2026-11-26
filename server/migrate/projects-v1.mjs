@@ -10,7 +10,7 @@ import { generate } from '../generate.mjs';
 import { backup } from './backup.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-process.loadEnvFile(path.join(here, '..', '.env'));
+process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const APPLY = process.argv.includes('--apply');
 
 const REAL_ESTATE = ['Nyati Evoque', 'Nyati Era III', 'Nyati Era IV', 'Nyati Exuberance IV', 'Nyati Esteban II', 'Nyati Esteban III', 'Nyati Elenor',

@@ -21,7 +21,7 @@ import { BUILTIN_TEMPLATES, renderTemplateText, cleanValues } from '../docstudio
 import { buildDocx } from '../docx.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-process.loadEnvFile(path.join(here, '..', '.env'));
+process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const APPLY = process.argv.includes('--apply');
 const DB_NAME = process.env.MONGODB_DB || 'compliance_tracker';
 

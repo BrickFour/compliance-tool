@@ -10,7 +10,7 @@ import { generate, loadWorld, Core } from '../generate.mjs';
 import { backup } from './backup.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-process.loadEnvFile(path.join(here, '..', '.env'));
+process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const APPLY = process.argv.includes('--apply');
 const DEFAULT_COMPANY = { _id: 'co_aakar', name: 'Aakar', facts: {} };
 

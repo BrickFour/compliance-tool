@@ -8,7 +8,7 @@ Atlas. Users sign in with email and password; roles are enforced on the server.
 
 ```
 npm install                # in the repo root: React, Vite and the server's packages
-copy server\.env.example server\.env     # then fill in the values (see below)
+copy .env.example .env                  # then fill in the values (see below)
 cd server && node migrate/init-db.mjs --apply && cd ..   # new client: creates the MONGODB_DB database, all collections and indexes
 npm run dev                # API on :8000 (restarts on change) + Vite on http://localhost:5173 (hot reload)
 ```
@@ -16,6 +16,9 @@ npm run dev                # API on :8000 (restarts on change) + Vite on http://
 Open the Vite address; it forwards `/api`, `/auth`, `/files`, `/data` and `/images` to the API server.
 To run it the way production does instead: `npm run build` (writes `client/dist`), then `npm start`
 (http://localhost:8000 serves both the API and the built app). `npm test` runs the server tests.
+
+The root `.env` is shared configuration: Node loads it for the backend and Vite reads it for the frontend.
+Only variables prefixed with `VITE_` are exposed to browser code; never put secrets in those.
 
 Required `.env` values: `MONGODB_URI`, and for the first run `ADMIN_EMAIL` +
 `ADMIN_PASSWORD` (creates the first admin when there are no users) and
@@ -41,7 +44,7 @@ node migrate/demo-data.mjs            # dry run: shows the target
 node migrate/demo-data.mjs --apply
 ```
 
-With `DEMO_QUICK_ACCESS=on` in `server/.env`, the sign-in page shows a **Quick access** grid: one click signs in as
+With `DEMO_QUICK_ACCESS=on` in `.env`, the sign-in page shows a **Quick access** grid: one click signs in as
 any demo user (`@demo.test` accounts only; every other account still needs its password). Leave it off for real data.
 
 Then start the server with the same `MONGODB_DB` and sign in as `admin@demo.test` (or `manager@`, `owner@`, `approver@`,
