@@ -65,7 +65,7 @@ const WRITE_CAPS = {
 const MAX_UPLOAD = 15 * 1024 * 1024;
 const UPLOAD_EXT = new Set(['.pdf', '.doc', '.docx']);
 const SESSION_MS = 12 * 60 * 60 * 1000;
-const MIN_PASSWORD = 10;
+const MIN_PASSWORD = 8;
 
 /* ----------------------------- database ----------------------------- */
 // Fail in seconds (with a clear error) rather than hang until the function times out when the database is unreachable.

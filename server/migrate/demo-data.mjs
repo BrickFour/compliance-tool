@@ -142,7 +142,7 @@ try {
   if (!APPLY) { console.log('DRY RUN: nothing was written. Re-run with --apply.'); process.exit(0); }
 
   const password = process.env.DEMO_PASSWORD || crypto.randomBytes(9).toString('base64url');
-  if (password.length < 10) throw new Error('DEMO_PASSWORD must be at least 10 characters.');
+  if (password.length < 8) throw new Error('DEMO_PASSWORD must be at least 8 characters.');
   const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
   const now = new Date().toISOString();
 

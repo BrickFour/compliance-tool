@@ -22,7 +22,7 @@ export default function Users() {
     reload();
   };
   const resetPw = async (email) => {
-    const pw = window.prompt('New temporary password for ' + email + ' (min 10 characters):');
+    const pw = window.prompt('New temporary password for ' + email + ' (min 8 characters):');
     if (!pw) return;
     try { await api('PUT', '/auth/users/' + encodeURIComponent(email), { password: pw }); ui.toast('Password reset. They are signed out everywhere.'); } catch (e) { ui.toast(e.message); }
   };
@@ -72,7 +72,7 @@ export default function Users() {
           <div className="field"><label>Name</label><input value={nu.name} onChange={set('name')} /></div>
           <div className="field"><label>Email</label><input type="email" autoComplete="off" value={nu.email} onChange={set('email')} /></div>
           <div className="field"><label>Role</label><select value={nu.role} onChange={set('role')}>{roleOpts}</select></div>
-          <div className="field"><label>Temporary password (min 10 characters)</label><input type="text" autoComplete="off" value={nu.password} onChange={set('password')} /></div>
+          <div className="field"><label>Temporary password (min 8 characters)</label><input type="text" autoComplete="off" value={nu.password} onChange={set('password')} /></div>
         </div>
         <div className="fact-sub" style={{ marginBottom: 10 }}>New users can see all projects. Use “Project access” in the table to limit them.</div>
         <button className="btn primary" type="button" onClick={add}>Add user</button>
