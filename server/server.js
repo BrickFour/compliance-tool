@@ -246,11 +246,12 @@ app.use(async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Public: the login page, the logo and the built scripts/styles (content-hashed, so cached for good).
+// Public: landing and login pages, the logo and built scripts/styles (content-hashed, so cached for good).
 const noCache = { 'Cache-Control': 'no-cache' };
 app.use(serveStatic(imagesDir, { prefix: '/images' }));
 app.use(serveStatic(path.join(clientDir, 'assets'), { prefix: '/assets', headers: () => ({ 'Cache-Control': 'public, max-age=31536000, immutable' }) }));
-app.get('/login.html', (req, res) => (req.user ? res.redirect('/') : res.sendFile(path.join(clientDir, 'login.html'), noCache)));
+app.get('/', (req, res) => res.sendFile(path.join(clientDir, 'index.html'), noCache));
+app.get('/login.html', (req, res) => (req.user ? res.redirect('/app.html') : res.sendFile(path.join(clientDir, 'login.html'), noCache)));
 
 // Quick access for demos: one-click sign-in as the demo users (…@demo.test, created by migrate/demo-data.mjs).
 // Only when DEMO_QUICK_ACCESS=on. Anyone who can open the site can then sign in as any demo user without a password,
@@ -297,6 +298,8 @@ app.use((req, res, next) => {
   }
   res.redirect('/login.html');
 });
+
+app.get('/app.html', (req, res) => res.sendFile(path.join(clientDir, 'app.html'), noCache));
 
 const requireCap = (cap) => (req, res, next) =>
   hasCap(req.user, cap) ? next() : res.status(403).json({ error: 'not allowed for your role' });
@@ -994,9 +997,8 @@ cronDailyDeps.run = async () => {
   if (process.env.VERCEL) await runCarryForward();
 };
 
-/* ----------------------------- app shell and register data (signed-in only) ----------------------------- */
+/* ----------------------------- register data (signed-in only) ----------------------------- */
 app.use(serveStatic(sharedDir, { prefix: '/data', headers: () => noCache }));
-app.get('/', (req, res) => res.sendFile(path.join(clientDir, 'index.html'), noCache));
 // On Vercel the built pages are served by its CDN (vercel.json outputDirectory), so only the API reaches this function.
 if (!process.env.VERCEL && !fs.existsSync(path.join(clientDir, 'index.html'))) console.warn('client/dist is missing: run "npm run build" (or use "npm run dev", which serves the app through Vite).');
 

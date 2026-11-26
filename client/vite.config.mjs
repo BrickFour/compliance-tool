@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: path.join(here, 'dist'),
       emptyOutDir: true,
-      rollupOptions: { input: { index: path.join(here, 'index.html'), login: path.join(here, 'login.html') } }
+      rollupOptions: { input: { index: path.join(here, 'index.html'), app: path.join(here, 'app.html'), login: path.join(here, 'login.html') } }
     }
   }
 });

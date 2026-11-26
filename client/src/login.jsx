@@ -19,7 +19,7 @@ function Login() {
     setErr(''); setBusy(true);
     try {
       const r = await request();
-      if (r.ok) { location.href = '/'; return; }
+      if (r.ok) { location.href = '/app.html'; return; }
       const j = await r.json().catch(() => ({}));
       setErr(j.error || 'Sign-in failed.');
     } catch { setErr('Could not reach the server.'); }

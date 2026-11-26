@@ -13,9 +13,10 @@ cd server && node migrate/init-db.mjs --apply && cd ..   # new client: creates t
 npm run dev                # API on :8000 (restarts on change) + Vite on http://localhost:5173 (hot reload)
 ```
 
-Open the Vite address; it forwards `/api`, `/auth`, `/files`, `/data` and `/images` to the API server.
-To run it the way production does instead: `npm run build` (writes `client/dist`), then `npm start`
-(http://localhost:8000 serves both the API and the built app). `npm test` runs the server tests.
+Open the Vite address for the public landing page. Sign in to open the protected workspace at `/app.html`.
+Vite forwards `/api`, `/auth`, `/files`, `/data` and `/images` to the API server. To run it the way production
+does instead: `npm run build` (writes `client/dist`), then `npm start` (http://localhost:8000 serves the landing
+page and protected app). `npm test` runs the server tests.
 
 The root `.env` is shared configuration: Node loads it for the backend and Vite reads it for the frontend.
 Only variables prefixed with `VITE_` are exposed to browser code; never put secrets in those.
@@ -49,6 +50,19 @@ any demo user (`@demo.test` accounts only; every other account still needs its p
 
 Then start the server with the same `MONGODB_DB` and sign in as `admin@demo.test` (or `manager@`, `owner@`, `approver@`,
 `depthead@`, `companyadmin@`, `pm@` — limited to one project — or `auditor@` — read-only — all `@demo.test`).
+
+### Just the demo logins (existing database)
+
+To add only the eight `@demo.test` sign-ins (one per role, dummy names) to the database you already use, without
+touching anything else:
+
+```
+cd server
+node migrate/demo-users.mjs            # dry run
+node migrate/demo-users.mjs --apply    # adds missing accounts; --reset also resets existing ones
+```
+
+The password is `DEMO_PASSWORD`, or `Demo@12345` when unset. The project manager is limited to one project.
 
 ## Roles (enforced by the server)
 
