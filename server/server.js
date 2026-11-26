@@ -75,12 +75,15 @@ const client = new MongoClient(MONGODB_URI, {
   serverSelectionTimeoutMS: 10_000, maxIdleTimeMS: 60_000,
   ...(process.env.VERCEL ? { maxPoolSize: 5, minPoolSize: 0 } : {})
 });
-try { await client.connect(); }
+// After a failed connect() the driver keeps its closed topology, so every later query fails with "Topology is closed"
+// and it never retries by itself. On Vercel start anyway and let the next request call connect() again (see ensureDb),
+// so one failed cold start does not leave the instance answering 500 until it is recycled.
+let dbConnected = false;
+const DB_HELP = 'Could not connect to MongoDB. Check MONGODB_URI, and that Atlas Network Access allows this host (Vercel has no fixed IP: allow 0.0.0.0/0).';
+try { await client.connect(); dbConnected = true; }
 catch (e) {
   console.error('MongoDB connection failed:', e.message);
-  // On Vercel a failed start-up used to leave the instance answering 500 to every request until it was recycled.
-  // The driver reconnects by itself on the next query, so start anyway and let each request retry the connection.
-  if (!process.env.VERCEL) fatal('Could not connect to MongoDB. Check MONGODB_URI, and that Atlas Network Access allows this host (Vercel has no fixed IP: allow 0.0.0.0/0).');
+  if (!process.env.VERCEL) fatal(DB_HELP);
 }
 const db = client.db(MONGODB_DB);
 const users = db.collection('users');
@@ -95,7 +98,7 @@ Promise.all([
   db.collection('chat_logs').createIndex({ at: -1 })
 ]).catch((e) => console.error('Index creation failed:', e.message));
 const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
-console.log(`Connected to MongoDB database "${MONGODB_DB}"`);
+if (dbConnected) console.log(`Connected to MongoDB database "${MONGODB_DB}"`);
 
 /* ----------------------------- passwords & sessions ----------------------------- */
 const scrypt = promisify(crypto.scrypt);
@@ -184,6 +187,16 @@ app.use(securityHeaders({
   },
   hsts: PROD
 }));
+
+// Retries the database connection when start-up (or an earlier retry) could not connect.
+app.use(async (req, res, next) => {
+  if (dbConnected) return next();
+  try { await client.connect(); dbConnected = true; console.log('MongoDB connected on retry.'); next(); }
+  catch (e) {
+    console.error('MongoDB connection failed:', e.message);
+    res.status(503).json({ ok: false, error: 'The database is unreachable. ' + DB_HELP.replace('Could not connect to MongoDB. ', '') });
+  }
+});
 
 app.get('/healthz', async (req, res) => {
   try { await db.command({ ping: 1 }); res.json({ ok: true }); }
