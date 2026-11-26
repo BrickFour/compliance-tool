@@ -23,6 +23,9 @@ import { buildDocx } from '../docx.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 process.loadEnvFile(path.join(here, '..', '..', '.env'));
 const APPLY = process.argv.includes('--apply');
+// --keep-users: the database may already have users (but no company, projects or tracking). Existing accounts are left
+// as they are; missing demo accounts are added, and pm@demo.test is limited to its demo project.
+const KEEP_USERS = process.argv.includes('--keep-users');
 const DB_NAME = process.env.MONGODB_DB || 'compliance_tracker';
 
 /* ----------------------------- the demo world ----------------------------- */
@@ -133,15 +136,15 @@ await client.connect();
 const db = client.db(DB_NAME);
 try {
   const host = (process.env.MONGODB_URI.match(/@([^/?]+)/) || process.env.MONGODB_URI.match(/\/\/([^/?]+)/) || [])[1] || '?';
-  const [projects, tracking, users] = await Promise.all(['projects', 'tracking', 'users'].map((c) => db.collection(c).countDocuments()));
+  const [projects, tracking, users, companies] = await Promise.all(['projects', 'tracking', 'users', 'companies'].map((c) => db.collection(c).countDocuments()));
   console.log(`Target: database "${DB_NAME}" on ${host} (${projects} projects, ${tracking} tracking rows, ${users} users).`);
-  if (projects || tracking || users) {
+  if (projects || tracking || companies || (users && !KEEP_USERS)) {
     console.error('This database already has data. Demo data is only written to an empty database. Set MONGODB_DB (and MONGODB_URI) to a separate one, e.g. MONGODB_DB=compliance_demo.');
     process.exit(1);
   }
   if (!APPLY) { console.log('DRY RUN: nothing was written. Re-run with --apply.'); process.exit(0); }
 
-  const password = process.env.DEMO_PASSWORD || crypto.randomBytes(9).toString('base64url');
+  const password = process.env.DEMO_PASSWORD || (KEEP_USERS ? 'Demo@12345' : crypto.randomBytes(9).toString('base64url'));
   if (password.length < 8) throw new Error('DEMO_PASSWORD must be at least 8 characters.');
   const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
   const now = new Date().toISOString();
@@ -160,7 +163,10 @@ try {
 
   /* users, one per role */
   const hash = await hashPassword(password);
-  for (const [email, name, role, project_ids] of USERS) await db.collection('users').insertOne({ _id: email, name, role, active: true, project_ids, passwordHash: hash, tv: 0, created_at: now });
+  for (const [email, name, role, project_ids] of USERS) {
+    if (KEEP_USERS && await db.collection('users').findOne({ _id: email })) { if (project_ids) await db.collection('users').updateOne({ _id: email }, { $set: { project_ids } }); continue; }
+    await db.collection('users').insertOne({ _id: email, name, role, active: true, project_ids, passwordHash: hash, tv: 0, created_at: now });
+  }
 
   /* statuses, documents and audit, by how far each project has got */
   const w = await loadWorld(db);
